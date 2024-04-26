@@ -166,8 +166,10 @@ export default function Page() {
             <button
               className="btn btn-danger btn-lg ms-2"
               type="reset"
+              disabled={!!(loading && uploaded)}
               onClick={() => {
                 setFile(null);
+                setLoading(false);
                 setDownloaded(null);
                 setUploaded(null);
               }}>
