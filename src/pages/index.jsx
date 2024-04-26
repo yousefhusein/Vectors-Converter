@@ -80,7 +80,7 @@ export default function Page() {
         .then((response) => {
           if (response.data) {
             const buffer = Buffer.from(response.data);
-            const dataURL = `data:image/png;base64,${buffer.toString(
+            const dataURL = `data:image/${formData.get("outputFileType")};base64,${buffer.toString(
               "base64"
             )}`;
             const aElement = document.createElement("a");
