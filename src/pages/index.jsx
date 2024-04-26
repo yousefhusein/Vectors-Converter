@@ -34,6 +34,19 @@ export default function Page() {
   const [file, setFile] = React.useState(null);
   const [loading, setLoading] = React.useState(false);
   const [uploaded, setUploaded] = React.useState(null);
+  const [downloaded, setDownloaded] = React.useState(null);
+
+  const calculatePercentage = () => {
+    let percentage = 0;
+
+    if (uploaded) {
+      percentage += (uploaded[0] * 50) / uploaded[1];
+    }
+    if (downloaded) {
+      percentage += (uploaded[0] * 50) / uploaded[1];
+    }
+    return percentage;
+  };
 
   const handleChange = (event) => {
     setFile(event.target.files[0]);
@@ -59,6 +72,9 @@ export default function Page() {
           {
             onUploadProgress: (event) => {
               setUploaded([event.loaded, event.total]);
+            },
+            onDownloadProgress: (event) => {
+              setDownloaded([event.loaded, event.total]);
             },
           }
         )
@@ -127,9 +143,9 @@ export default function Page() {
                 <div
                   className="progress-bar bg-success"
                   style={{
-                    width: `${(uploaded[0] * 100) / uploaded[1]}%`,
+                    width: `${calculatePercentage()}%`,
                   }}>
-                  {Math.round((uploaded[0] * 100) / uploaded[1])}%
+                  {Math.round(calculatePercentage())}%
                 </div>
               </div>
             ) : (
