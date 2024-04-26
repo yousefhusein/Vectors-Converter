@@ -57,8 +57,6 @@ export default function Page() {
     const formData = new FormData(event.target);
     const fileReader = new FileReader();
 
-    setDownloaded([0, 0]);
-    setUploaded([0, 0]);
     setLoading(true);
 
     fileReader.onload = (event) => {
@@ -106,7 +104,7 @@ export default function Page() {
       <div className="container">
         <form className="card w-100" onSubmit={handleSubmit}>
           <div className="card-header text-center">
-            <p className="fw-bold h4">IMAGE CONVERTER</p>
+            <p className="fw-bold h4">VECTORS CONVERTER</p>
           </div>
           <div className="card-body">
             <div className="row">
@@ -157,15 +155,19 @@ export default function Page() {
             <button
               className="btn btn-success btn-lg"
               type="submit"
+              onClick={() => {
+                setDownloaded(null);
+                setUploaded(null);
+              }}
               disabled={!file || loading}>
-              DOWNLOAD <FontAwesomeIcon icon={faDownload} />
+              DOWNLOAD <FontAwesomeIcon icon={faDownload} size="1x" />
             </button>
 
             <button
               className="btn btn-danger btn-lg ms-2"
               type="reset"
               onClick={() => setFile(null)}>
-              RESTORE <FontAwesomeIcon icon={faTrash} />
+              RESTORE <FontAwesomeIcon icon={faTrash} size="1x" />
             </button>
           </div>
         </form>
