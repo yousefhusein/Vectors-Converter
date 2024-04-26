@@ -153,7 +153,7 @@ export default function Page() {
           </div>
           <div className="card-footer">
             <button
-              className="btn btn-success m-2"
+              className="btn btn-success"
               type="submit"
               onClick={() => {
                 setDownloaded(null);
@@ -164,7 +164,7 @@ export default function Page() {
             </button>
 
             <button
-              className="btn btn-danger m-2"
+              className="btn btn-danger ms-2"
               type="reset"
               disabled={!!(loading && uploaded)}
               onClick={() => {
