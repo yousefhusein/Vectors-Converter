@@ -32,6 +32,8 @@ const sizes = [
 
 export default function Page() {
   const [file, setFile] = React.useState(null);
+  const [loading, setLoading] = React.useState(false);
+  const [uploaded, setUploaded] = React.useState(null);
 
   const handleChange = (event) => {
     setFile(event.target.files[0]);
@@ -43,13 +45,23 @@ export default function Page() {
     const formData = new FormData(event.target);
     const fileReader = new FileReader();
 
+    setLoading(true);
+
     fileReader.onload = (event) => {
       axios
-        .post("/api/resizeFile", {
-          outputFileType: formData.get("outputFileType"),
-          outputFileSize: parseInt(formData.get("outputFileSize")),
-          buffer: Buffer.from(event.target.result).toJSON(),
-        })
+        .post(
+          "/api/resizeFile",
+          {
+            outputFileType: formData.get("outputFileType"),
+            outputFileSize: parseInt(formData.get("outputFileSize")),
+            buffer: Buffer.from(event.target.result).toJSON(),
+          },
+          {
+            onUploadProgress: (event) => {
+              setUploaded([event.loaded, event.total]);
+            },
+          }
+        )
         .then((response) => {
           if (response.data) {
             const buffer = Buffer.from(response.data);
@@ -64,6 +76,7 @@ export default function Page() {
             )}.${formData.get("outputFileType")}`;
             aElement.href = dataURL;
             aElement.click();
+            setLoading(false);
           }
         });
     };
@@ -109,21 +122,32 @@ export default function Page() {
                 />
               </div>
             </div>
+            {uploaded ? (
+              <div className="progress">
+                <div
+                  className="progress-bar bg-success"
+                  style={{
+                    width: `${(uploaded[0] * 100) / uploaded[1]}%`,
+                  }}>
+                  {Math.round((uploaded[0] * 100) / uploaded[1])}%
+                </div>
+              </div>
+            ) : (
+              ""
+            )}
           </div>
           <div className="card-footer">
             <button
               className="btn btn-success btn-lg"
               type="submit"
-              disabled={!file}
-            >
+              disabled={!file || loading}>
               DOWNLOAD <FontAwesomeIcon icon={faDownload} />
             </button>
 
             <button
               className="btn btn-danger btn-lg ms-2"
               type="reset"
-              onClick={() => setFile(null)}
-            >
+              onClick={() => setFile(null)}>
               RESTORE <FontAwesomeIcon icon={faTrash} />
             </button>
           </div>
