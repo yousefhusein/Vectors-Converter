@@ -38,7 +38,6 @@ export default function Page() {
 
   const calculatePercentage = () => {
     let percentage = 0;
-
     if (uploaded) {
       percentage += (uploaded[0] * 50) / uploaded[1];
     }
@@ -58,6 +57,8 @@ export default function Page() {
     const formData = new FormData(event.target);
     const fileReader = new FileReader();
 
+    setDownloaded([0, 0]);
+    setUploaded([0, 0]);
     setLoading(true);
 
     fileReader.onload = (event) => {
