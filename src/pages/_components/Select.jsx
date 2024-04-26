@@ -14,11 +14,12 @@ export default function Select({ formLabel, options, ...props }) {
         className="form-select shadow-none form-select-lg"
         style={{ cursor: "pointer" }}
         {...props}>
-        {options.map((option, index) => (
-          <option value={option.value.toString()} key={index}>
-            {option.label || option.value}
-          </option>
-        ))}
+        {options &&
+          options.map((option, index) => (
+            <option value={option.value.toString()} key={index}>
+              {option.label || option.value}
+            </option>
+          ))}
       </select>
     </div>
   );
