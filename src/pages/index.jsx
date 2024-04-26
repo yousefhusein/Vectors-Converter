@@ -166,7 +166,11 @@ export default function Page() {
             <button
               className="btn btn-danger btn-lg ms-2"
               type="reset"
-              onClick={() => setFile(null)}>
+              onClick={() => {
+                setFile(null);
+                setDownloaded(null);
+                setUploaded(null);
+              }}>
               RESTORE <FontAwesomeIcon icon={faTrash} size="1x" />
             </button>
           </div>
