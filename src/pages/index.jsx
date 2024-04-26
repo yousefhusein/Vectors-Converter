@@ -34,12 +34,25 @@ const sizes = [
 export default function Page() {
   const [file, setFile] = React.useState(null);
   const [loading, setLoading] = React.useState(false);
+  const [uploaded, setUploaded] = React.useState(null);
+  const [downloaded, setDownloaded] = React.useState(null);
+
+  const calculatePercentage = () => {
+    let percentage = 0;
+    if (uploaded) {
+      percentage += (uploaded[0] * 50) / uploaded[1];
+    }
+    if (downloaded) {
+      percentage += (uploaded[0] * 50) / uploaded[1];
+    }
+    return percentage;
+  };
 
   const handleChange = (event) => {
     setFile(event.target.files[0]);
   };
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = (event) => {
     event.preventDefault();
 
     const formData = new FormData(event.target);
@@ -47,38 +60,42 @@ export default function Page() {
 
     setLoading(true);
 
-    fileReader.onload = async (event) => {
-      try {
-        const response = await fetch("/api/resizeFile", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
+    fileReader.onload = (event) => {
+      axios
+        .post(
+          "/api/resizeFile",
+          {
             outputFileType: formData.get("outputFileType"),
             outputFileSize: parseInt(formData.get("outputFileSize")),
-            buffer: Array.from(new Uint8Array(event.target.result)),
-          }),
+            buffer: Buffer.from(event.target.result).toJSON(),
+          },
+          {
+            timeout: 7200000,
+            onUploadProgress: (event) => {
+              setUploaded([event.loaded, event.total]);
+            },
+            onDownloadProgress: (event) => {
+              setDownloaded([event.loaded, event.total]);
+            },
+          }
+        )
+        .then((response) => {
+          if (response.data) {
+            const buffer = Buffer.from(response.data);
+            const dataURL = `data:image/png;base64,${buffer.toString(
+              "base64"
+            )}`;
+            const aElement = document.createElement("a");
+
+            aElement.download = `${file.name.replace(
+              ".svg",
+              ""
+            )}.${formData.get("outputFileType")}`;
+            aElement.href = dataURL;
+            aElement.click();
+            setLoading(false);
+          }
         });
-
-        if (response.ok) {
-          const buffer = Buffer.from(await response.json());
-          const dataURL = `data:image/png;base64,${buffer.toString("base64")}`;
-          const aElement = document.createElement("a");
-
-          aElement.download = `${file.name.replace(".svg", "")}.${formData.get(
-            "outputFileType"
-          )}`;
-          aElement.href = dataURL;
-          aElement.click();
-        } else {
-          throw new Error("Request failed");
-        }
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
     };
 
     fileReader.readAsArrayBuffer(file);
@@ -96,7 +113,7 @@ export default function Page() {
               <div className="col-12 col-lg-6 p-3">
                 <Input
                   type="file"
-                  formLabel="ENTER YOUR SVG FILE"
+                  formLabel="SVG FILE"
                   accept="image/svg+xml"
                   required={true}
                   name="inputFile"
@@ -107,7 +124,7 @@ export default function Page() {
               <div className="col-12 col-lg-6 p-3">
                 <Select
                   options={fileTypes}
-                  formLabel="CONVERT TO"
+                  formLabel="OUTPUT FORMAT"
                   id="output-file-type"
                   name="outputFileType"
                   required={true}
@@ -122,22 +139,41 @@ export default function Page() {
                 />
               </div>
             </div>
+            {uploaded ? (
+              <div className="progress">
+                <div
+                  className="progress-bar bg-success"
+                  style={{
+                    width: `${calculatePercentage()}%`,
+                  }}>
+                  {Math.round(calculatePercentage())}%
+                </div>
+              </div>
+            ) : (
+              ""
+            )}
           </div>
           <div className="card-footer">
             <button
-              className="btn btn-success m-1"
+              className="btn btn-success btn-lg"
               type="submit"
+              onClick={() => {
+                setDownloaded(null);
+                setUploaded(null);
+              }}
               disabled={!file || loading}>
               DOWNLOAD <FontAwesomeIcon icon={faDownload} size="1x" />
             </button>
 
             <button
-              className="btn btn-danger m-1"
+              className="btn btn-danger btn-lg ms-2"
               type="reset"
-              disabled={loading}
+              disabled={!!(loading && uploaded)}
               onClick={() => {
                 setFile(null);
                 setLoading(false);
+                setDownloaded(null);
+                setUploaded(null);
               }}>
               RESTORE <FontAwesomeIcon icon={faTrash} size="1x" />
             </button>
