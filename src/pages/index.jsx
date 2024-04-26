@@ -28,6 +28,7 @@ const sizes = [
   { label: "1024x1024", value: 1024 },
   { label: "2048x2048", value: 2048 },
   { label: "4096x4096", value: 4096 },
+  { label: "8192x8192", value: 8192 },
 ];
 
 export default function Page() {
