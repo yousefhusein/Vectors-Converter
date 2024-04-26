@@ -69,6 +69,7 @@ export default function Page() {
             buffer: Buffer.from(event.target.result).toJSON(),
           },
           {
+            timeout: 7200000,
             onUploadProgress: (event) => {
               setUploaded([event.loaded, event.total]);
             },
