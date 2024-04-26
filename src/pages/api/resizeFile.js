@@ -7,6 +7,9 @@ import sharp from "sharp";
  */
 export default function handler(req, res) {
   if (req.method === "POST") {
+    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader("Connection", "keep-alive");
+
     sharp(Buffer.from(req.body.buffer))
       .resize(req.body.outputFileSize, req.body.outputFileSize)
       .toFormat(req.body.outputFileType)
