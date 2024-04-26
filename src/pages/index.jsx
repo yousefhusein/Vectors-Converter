@@ -26,9 +26,7 @@ const sizes = [
   { label: "256x256", value: 256 },
   { label: "512x512", value: 512 },
   { label: "1024x1024", value: 1024 },
-  { label: "2048x2048", value: 2048 },
-  { label: "4096x4096", value: 4096 },
-  { label: "8192x8192", value: 8192 },
+  { label: "2048x2048", value: 2048 }
 ];
 
 export default function Page() {
@@ -155,7 +153,7 @@ export default function Page() {
           </div>
           <div className="card-footer">
             <button
-              className="btn btn-success btn-lg"
+              className="btn btn-success m-2"
               type="submit"
               onClick={() => {
                 setDownloaded(null);
@@ -166,7 +164,7 @@ export default function Page() {
             </button>
 
             <button
-              className="btn btn-danger btn-lg ms-2"
+              className="btn btn-danger m-2"
               type="reset"
               disabled={!!(loading && uploaded)}
               onClick={() => {
