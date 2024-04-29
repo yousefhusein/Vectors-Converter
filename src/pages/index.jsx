@@ -1,39 +1,22 @@
 "use client";
 
-import { Blob, Buffer } from "buffer";
 import { faDownload, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { fileTypes, sizes } from "./_utils/Constants";
 
+import { Buffer } from "buffer";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Input from "./_components/Input";
 import React from "react";
 import Select from "./_components/Select";
 import axios from "axios";
 
-const fileTypes = [
-  { label: "PNG", value: "png" },
-  { label: "JPG", value: "jpg" },
-  { label: "JPEG", value: "jpeg" },
-  { label: "WEBP", value: "webp" },
-];
-
-const sizes = [
-  { label: "4x4", value: 4 },
-  { label: "8x8", value: 8 },
-  { label: "16x16", value: 16 },
-  { label: "32x32", value: 32 },
-  { label: "64x64", value: 64 },
-  { label: "128x128", value: 128 },
-  { label: "256x256", value: 256 },
-  { label: "512x512", value: 512 },
-  { label: "1024x1024", value: 1024 },
-  { label: "2048x2048", value: 2048 }
-];
-
 export default function Page() {
   const [file, setFile] = React.useState(null);
   const [loading, setLoading] = React.useState(false);
   const [uploaded, setUploaded] = React.useState(null);
   const [downloaded, setDownloaded] = React.useState(null);
+  const [backgroundColorDisabled, setBackgroundColorDisabled] =
+    React.useState(true);
 
   const calculatePercentage = () => {
     let percentage = 0;
@@ -65,6 +48,7 @@ export default function Page() {
           {
             outputFileType: formData.get("outputFileType"),
             outputFileSize: parseInt(formData.get("outputFileSize")),
+            backgroundColor: formData.get("backgroundColor"),
             buffer: Buffer.from(event.target.result).toJSON(),
           },
           {
@@ -80,9 +64,9 @@ export default function Page() {
         .then((response) => {
           if (response.data) {
             const buffer = Buffer.from(response.data);
-            const dataURL = `data:image/${formData.get("outputFileType")};base64,${buffer.toString(
-              "base64"
-            )}`;
+            const dataURL = `data:image/${formData.get(
+              "outputFileType"
+            )};base64,${buffer.toString("base64")}`;
             const aElement = document.createElement("a");
 
             aElement.download = `${file.name.replace(
@@ -93,6 +77,12 @@ export default function Page() {
             aElement.click();
             setLoading(false);
           }
+        })
+        .catch((error) => {
+          alert(error.message);
+          setLoading(false);
+          setDownloaded(null);
+          setUploaded(null);
         });
     };
 
@@ -118,6 +108,30 @@ export default function Page() {
                   id="input-file"
                   onChange={handleChange}
                 />
+                <Input
+                  type="color"
+                  formLabel="BACKGROUND COLOR"
+                  required={true}
+                  name="backgroundColor"
+                  id="background-color"
+                  disabled={!!backgroundColorDisabled}
+                />
+                <div className="form-check">
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    id="flexCheckChecked"
+                    checked={!backgroundColorDisabled}
+                    onChange={(event) =>
+                      setBackgroundColorDisabled(!event.target.checked)
+                    }
+                  />
+                  <label
+                    className="form-check-label user-select-none"
+                    htmlFor="flexCheckChecked">
+                    Background Color
+                  </label>
+                </div>
               </div>
               <div className="col-12 col-lg-6 p-3">
                 <Select
@@ -172,6 +186,7 @@ export default function Page() {
                 setLoading(false);
                 setDownloaded(null);
                 setUploaded(null);
+                setBackgroundColorDisabled(true);
               }}>
               RESTORE <FontAwesomeIcon icon={faTrash} size="1x" />
             </button>
