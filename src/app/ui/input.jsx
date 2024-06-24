@@ -1,15 +1,15 @@
 export default function Input({ formLabel, ...props }) {
   return (
-    <div className="form-group mb-2">
+    <div className="relative mb-2 px-2">
       <label
-        className="form-label fw-bold"
+        className="font-bold"
         htmlFor={props.id}
         style={{ marginBottom: '-10px' }}
       >
         {formLabel}
-        {props.required ? <span className="text-danger"> *</span> : ''}
+        {props.required ? <span className="text-red-800"> *</span> : ''}
       </label>
-      <input className="form-control shadow-none form-control" {...props} />
+      <input className="form-input shadow-none w-full min-h-12" {...props} />
     </div>
   )
 }

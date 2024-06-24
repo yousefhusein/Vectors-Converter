@@ -1,16 +1,16 @@
 export default function Select({ formLabel, options, ...props }) {
   return (
-    <div className="form-group mb-2">
+    <div className="relative mb-2 px-2">
       <label
-        className="form-label fw-bold"
+        className="font-bold"
         htmlFor={props.id}
         style={{ marginBottom: '-10px' }}
       >
         {formLabel}
-        {props.required ? <span className="text-danger"> *</span> : ''}
+        {props.required ? <span className="text-red-800"> *</span> : ''}
       </label>
       <select
-        className="form-select shadow-none"
+        className="form-select shadow-none w-full min-h-12"
         style={{ cursor: 'pointer' }}
         {...props}
       >

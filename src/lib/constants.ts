@@ -3,7 +3,7 @@ export const fileTypes = [
   { label: 'JPG', value: 'jpg' },
   { label: 'JPEG', value: 'jpeg' },
   { label: 'WEBP', value: 'webp' },
-]
+] as const
 
 export const sizes = [
   { label: '16x16', value: 16 },
@@ -15,4 +15,4 @@ export const sizes = [
   { label: '1024x1024', value: 1024 },
   { label: '2048x2048', value: 2048 },
   { label: '4096x4096', value: 4096 },
-]
+] as const
