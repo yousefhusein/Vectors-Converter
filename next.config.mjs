@@ -1,10 +1,4 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {
-  reactStrictMode: false,
-  serverRuntimeConfig: {
-    timeout: 7200000,
-    serverTimeout: 7200000,
-  },
-};
+const nextConfig = {}
 
-export default nextConfig;
+export default nextConfig
