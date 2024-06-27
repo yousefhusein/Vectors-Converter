@@ -12,8 +12,14 @@ export default function handler(req, res) {
     const backgroundColor = req.body.backgroundColor || false
     const outputFileSize = Number(req.body.outputFileSize)
     const outputFileType = req.body.outputFileType
+    const extend = +req.body.outputExtend
 
-    if (backgroundColor !== false && !hex.rgb(backgroundColor)) {
+    if (Number.isNaN(extend) || extend < 0 || extend > 500) {
+      res.status(400).json({
+        message: `extend: "${req.body.outputExtend}" is invalid, it should >= 0 and <= 500 `,
+      })
+    }
+    else if (backgroundColor !== false && !hex.rgb(backgroundColor)) {
       res.status(400).json({
         message: `BackgroundColor: "${req.body.backgroundColor}" is invalid hex-color`,
       })
@@ -44,7 +50,13 @@ export default function handler(req, res) {
         .resize(outputFileSize, outputFileSize)
         .toFormat(outputFileType)
         .flatten(backgroundColor ? { background: backgroundColor } : false)
-        .toBuffer()
+        .extend({
+          background: backgroundColor || '#00000000',
+          bottom: extend,
+          top: extend,
+          left: extend,
+          right: extend,
+        }).toBuffer()
         .then((buffer) => {
           res.status(200).json(buffer.toJSON())
         })

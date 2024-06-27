@@ -3,8 +3,6 @@
 import { Buffer } from 'buffer'
 import React from 'react'
 import axios from 'axios'
-
-import { Icon } from '@iconify/react'
 import Select from './ui/select'
 import Button from './ui/button'
 import Input from './ui/input'
@@ -20,6 +18,7 @@ export default function Page() {
   const [downloaded, setDownloaded] = React.useState<number[]>()
   const [backgroundColorDisabled, setBackgroundColorDisabled]
     = React.useState(true)
+  const [extend, setExtend] = React.useState<number>(0)
 
   const handleChange = (event: any) => {
     setFile(event.target?.files?.[0])
@@ -41,6 +40,7 @@ export default function Page() {
           .post(
             '/api/resizeFile',
             {
+              outputExtend: extend,
               outputFileType: fileExtension,
               outputFileSize: Number.parseInt(formData.get('outputFileSize') as string),
               backgroundColor: formData.get('backgroundColor'),
@@ -131,6 +131,17 @@ export default function Page() {
                 id="output-file-size"
                 name="outputFileSize"
                 required={true}
+              />
+              <Input
+                formLabel="Extend"
+                value={extend}
+                onChange={(e: any) => setExtend(e.target.value)}
+                id="extend-input"
+                name="extend-input"
+                type="number"
+                min={0}
+                max={500}
+                required
               />
             </div>
             {uploaded
