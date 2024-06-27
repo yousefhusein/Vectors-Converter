@@ -169,9 +169,14 @@ export default function Page() {
             <Button
               className="bg-red-800 hover:bg-red-700 text-white"
               icon="material-symbols:delete-outline-rounded"
+              type="reset"
               onClick={() => {
                 setDownloaded(void 0)
                 setUploaded(void 0)
+                setExtend(0)
+                setBackgroundColorDisabled(true)
+                setFile(undefined)
+                setLoading(false)
               }}
             >
               RESTORE
